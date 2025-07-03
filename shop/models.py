@@ -14,6 +14,10 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+    
+    def delete(self, using =None, keep_parents =False):
+        self.deleted = True
+        self.save()
 
 
 class category(BaseModel):
