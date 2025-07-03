@@ -7,3 +7,6 @@ admin.site.register(models.order_products)
 admin.site.register(models.product)
 admin.site.register(models.category)
 
+
+
+
