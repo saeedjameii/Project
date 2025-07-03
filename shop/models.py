@@ -36,6 +36,8 @@ class product(BaseModel):
         return self.title
 
 
+
+
 class cart(BaseModel):
     quantity = models.PositiveIntegerField()
     product = models.ForeignKey(product, on_delete=models.CASCADE)
