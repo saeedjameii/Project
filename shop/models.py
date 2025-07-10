@@ -1,5 +1,5 @@
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 
 class BaseModelManager(models.Manager):
     def get_queryset(self):
@@ -46,13 +46,13 @@ class Product(BaseModel):
 class Cart(BaseModel):
     quantity = models.PositiveIntegerField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
      
 
 
 class Order(BaseModel):
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     status = models.BooleanField(null=True)
 
 
@@ -66,7 +66,7 @@ class Order_products(BaseModel):
 
 class Payment(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     status = models.CharField(max_length=100)
     error_code = models.CharField(max_length=200)

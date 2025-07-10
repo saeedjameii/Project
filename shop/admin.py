@@ -1,11 +1,7 @@
 from django.contrib import admin
 from . import models
 
-admin.site.register(models.Cart)
-admin.site.register(models.Order)
-admin.site.register(models.Order_products)
-admin.site.register(models.Product)
-admin.site.register(models.Category)
+
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -50,3 +46,10 @@ class OrderProductAdmin(admin.ModelAdmin):
         for order_product in queryset:
             order_product.delete()
 
+
+
+admin.site.register(models.Category, CategoryAdmin)
+admin.site.register(models.Order, OrderAdmin)
+admin.site.register(models.Product, ProductAdmin)
+admin.site.register(models.Cart, CartAdmin)
+admin.site.register(models.Order_products, OrderProductAdmin)
