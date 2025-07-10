@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='category',
+            name='Category',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('deleted', models.BooleanField(default=False)),
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='order',
+            name='Order',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('deleted', models.BooleanField(default=False)),
@@ -43,18 +43,18 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='payment',
+            name='Payment',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('price', models.DecimalField(decimal_places=2, max_digits=10)),
                 ('status', models.CharField(max_length=100)),
                 ('error_code', models.CharField(max_length=200)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.order')),
+                ('Order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.Order')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
-            name='product',
+            name='Product',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('deleted', models.BooleanField(default=False)),
@@ -66,14 +66,14 @@ class Migration(migrations.Migration):
                 ('image', models.ImageField(upload_to='')),
                 ('quantity', models.PositiveIntegerField()),
                 ('status', models.BooleanField(default=True)),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.category')),
+                ('Category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.Category')),
             ],
             options={
                 'abstract': False,
             },
         ),
         migrations.CreateModel(
-            name='order_products',
+            name='Order_products',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('deleted', models.BooleanField(default=False)),
@@ -81,15 +81,15 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('quantity', models.PositiveIntegerField()),
                 ('price', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.order')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.product')),
+                ('Order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.Order')),
+                ('Product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.Product')),
             ],
             options={
                 'abstract': False,
             },
         ),
         migrations.CreateModel(
-            name='cart',
+            name='Cart',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('deleted', models.BooleanField(default=False)),
@@ -97,7 +97,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('quantity', models.PositiveIntegerField()),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.product')),
+                ('Product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.Product')),
             ],
             options={
                 'abstract': False,

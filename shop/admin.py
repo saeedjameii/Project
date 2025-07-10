@@ -1,11 +1,11 @@
 from django.contrib import admin
 from . import models
 
-admin.site.register(models.cart)
-admin.site.register(models.order)
-admin.site.register(models.order_products)
-admin.site.register(models.product)
-admin.site.register(models.category)
+admin.site.register(models.Cart)
+admin.site.register(models.Order)
+admin.site.register(models.Order_products)
+admin.site.register(models.Product)
+admin.site.register(models.Category)
 
 
 class CategoryAdmin(admin.ModelAdmin):
