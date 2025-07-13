@@ -31,7 +31,7 @@ class Product(BaseModel):
     title = models.CharField(max_length=100)
     contetnt = models.TextField()
     price = models.DecimalField(decimal_places=2, max_digits=10)
-    image = models.ImageField()
+    image = models.ImageField(upload_to="image/products")
     quantity = models.PositiveIntegerField()
     status = models.BooleanField(default=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
