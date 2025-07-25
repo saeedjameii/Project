@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Product
+from .models import Product, Category
 from django.shortcuts import get_object_or_404
 
 # from django.http import HttpResponse
@@ -24,7 +24,14 @@ def checkout(request):
 
 
 def store(request):
-    return render(request, "store.html")
+    category = request.GET.get('category')
+
+    if category is not None:
+        products = Product.objects.filter(category__title=category)
+        return render(request, "store.html", {'products' : products})
+
+    products = Product.objects.all()
+    return render(request, "store.html", {'products' : products})
 
 
 def detail(request, id:int, title:str):
