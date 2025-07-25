@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Product
+from django.shortcuts import get_object_or_404
 
 # from django.http import HttpResponse
 
@@ -26,5 +27,6 @@ def store(request):
     return render(request, "store.html")
 
 
-def product(request):
-    return render(request, "product.html")
+def detail(request, id:int, title:str):
+    product = get_object_or_404(Product, id=id)
+    return render(request, "product.html", {'product' : product})
