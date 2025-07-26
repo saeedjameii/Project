@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
+
 from .models import Product, Category
 from django.shortcuts import get_object_or_404
 
@@ -37,3 +39,16 @@ def store(request):
 def detail(request, id:int, title:str):
     product = get_object_or_404(Product, id=id)
     return render(request, "product.html", {'product' : product})
+
+
+@require_POST
+def add_to_cart(request):
+    product_id = request.POST.get('product_id')
+    quantity = int(request.POST.get('quantity'))
+
+    get_object_or_404(Product, id=product_id)
+    
+    return render(request, "cart.html")
+
+def cart(request):
+    pass
