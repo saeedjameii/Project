@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from itertools import product
+
+from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
 from .models import Product, Category
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, reverse
 
 # from django.http import HttpResponse
 
@@ -46,9 +48,27 @@ def add_to_cart(request):
     product_id = request.POST.get('product_id')
     quantity = int(request.POST.get('quantity'))
 
-    get_object_or_404(Product, id=product_id)
-    
-    return render(request, "cart.html")
+    product = get_object_or_404(Product, id=product_id)
 
-def cart(request):
-    pass
+    cart = request.session.get('cart')
+    if not cart:
+        cart = request.session['cart'] = {}
+
+    cart[product_id] = {
+        'quantity' : int(quantity),
+        'price' : str(product.price)
+    }
+
+    request.session.modified = True
+    return redirect(reverse('shop:cart_detail'))
+
+def cart_detail(request):
+    cart = request.session.get('cart')  
+    if cart:
+        product_ids = cart.keys()
+        products = Product.objects.filter(id__in = product_ids)
+        for product in products:
+            cart[str(product.id)]['product'] = product
+        return render(request, "cart_detail.html", {'cart' : cart})
+
+    return render(request, "cart_detail.html")
