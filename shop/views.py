@@ -1,5 +1,6 @@
 from itertools import product
 
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
@@ -72,3 +73,14 @@ def cart_detail(request):
         return render(request, "cart_detail.html", {'cart' : cart})
 
     return render(request, "cart_detail.html")
+
+def remove_from_cart(request, product_id):
+    if Product.objects.filter(id=product_id).exists():
+        cart = request.session.get('cart')
+        if cart:
+            product_id = str(product_id)
+            if product_id in cart:
+                del cart[product_id]
+                request.session.modified = True
+        return redirect(reverse('shop:cart_detail'))
+    raise Http404('Product not found')

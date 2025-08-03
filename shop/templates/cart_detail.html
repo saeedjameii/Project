@@ -1,21 +1,261 @@
+
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Cart{% endblock title %}
-{% block content %}
-    <h1>Cart detail</h1>
-    <table>
-        <tr>
-            <th>title </th>
-            <th>price </th>
-            <th>quantity </th>
-        </tr>
-        {% for key, values in cart.items %}  
-        <tr>
-            <td>{{ values.product }}</td>
-            <td>{{ values.price }}</td>
-            <td>{{ values.quantity }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+{% block styles %}
+    <style>
+        /* Cart styling with Tailwind-inspired classes */
+        .cart-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
 
+        .cart-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.75rem;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .cart-table th {
+            background-color: #4a5568;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .cart-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .cart-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cart-table tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.25rem;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .product-title {
+            color: #2d3748;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .product-title:hover {
+            color: #4299e1;
+            text-decoration: underline;
+        }
+
+        .product-price {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .product-quantity {
+            font-weight: 500;
+            background-color: #edf2f7;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+
+        .remove-button {
+            display: inline-block;
+            background-color: #f56565;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .remove-button:hover {
+            background-color: #e53e3e;
+        }
+
+        .cart-summary {
+            background-color: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-summary-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .cart-total-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .cart-total-value {
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .checkout-button {
+            display: block;
+            width: 100%;
+            background-color: #48bb78;
+            color: white;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .checkout-button:hover {
+            background-color: #38a169;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: #f7fafc;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-cart-icon {
+            font-size: 3rem;
+            color: #a0aec0;
+            margin-bottom: 1rem;
+        }
+
+        .empty-cart-message {
+            font-size: 1.25rem;
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+        }
+
+        .continue-shopping {
+            display: inline-block;
+            background-color: #4299e1;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .continue-shopping:hover {
+            background-color: #3182ce;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .cart-table th:nth-child(1),
+            .cart-table td:nth-child(1) {
+                display: none;
+            }
+
+            .cart-table th,
+            .cart-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .remove-button {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .cart-title {
+                font-size: 1.5rem;
+            }
+
+            .cart-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+{% endblock styles %}
+
+{% block content %}
+    <div class="cart-container">
+        <h1 class="cart-title">Shopping Cart</h1>
+
+        {% if cart %}
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, values in cart.items %}
+                    <tr>
+                        <td><img src="{{ values.product.image.url }}" alt="{{ values.product.title }}" class="product-image" /></td>
+                        <td><a href="{{ values.product.get_absolute_url }}" class="product-title">{{ values.product.title }}</a></td>
+                        <td class="product-price">{{ values.price }}</td>
+                        <td><span class="product-quantity">{{ values.quantity }}</span></td>
+                        <td><a href="{% url 'shop:remove_from_cart' values.product.id %}" class="remove-button">Remove</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+                <a href="{% url 'shop:checkout' %}" class="checkout-button">Proceed to Checkout</a>
+            </div>
+        {% else %}
+            <div class="empty-cart">
+                <div class="empty-cart-icon">🛒</div>
+                <p class="empty-cart-message">Your cart is empty</p>
+                <a href="{% url 'shop:store' %}" class="continue-shopping">Continue Shopping</a>
+            </div>
+        {% endif %}
+    </div>
 {% endblock content %}
