@@ -3,7 +3,7 @@ from itertools import product
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
-
+from decimal import Decimal
 from .models import Product, Category
 from django.shortcuts import get_object_or_404, redirect, reverse
 
@@ -47,7 +47,7 @@ def detail(request, id:int, title:str):
 @require_POST
 def add_to_cart(request):
     product_id = request.POST.get('product_id')
-    quantity = int(request.POST.get('quantity'))
+    quantity = request.POST.get('quantity')
 
     product = get_object_or_404(Product, id=product_id)
 
@@ -55,10 +55,19 @@ def add_to_cart(request):
     if not cart:
         cart = request.session['cart'] = {}
 
-    cart[product_id] = {
-        'quantity' : int(quantity),
-        'price' : str(product.price)
-    }
+    if product_id in cart:
+        update = request.POST.get('update')
+        if update == '1':
+            cart[product_id]['quantity'] = int(quantity)
+        else:
+            cart[product_id]['quantity'] += int(quantity)
+    else:
+        cart[product_id] = {
+            'quantity': int(quantity),
+            'price': str(product.price)
+        }
+
+
 
     request.session.modified = True
     return redirect(reverse('shop:cart_detail'))
@@ -70,6 +79,10 @@ def cart_detail(request):
         products = Product.objects.filter(id__in = product_ids)
         for product in products:
             cart[str(product.id)]['product'] = product
+
+        for item in cart.values():
+            item['total'] = Decimal(item['price']) * item['quantity']
+
         return render(request, "cart_detail.html", {'cart' : cart})
 
     return render(request, "cart_detail.html")

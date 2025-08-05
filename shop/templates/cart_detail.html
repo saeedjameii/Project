@@ -215,6 +215,11 @@
                 display: block;
                 overflow-x: auto;
             }
+
+            .add-to-cart .qty-label .input-number {
+                width: 90px;
+                display: inline-block;
+            }
         }
     </style>
 {% endblock styles %}
@@ -231,6 +236,7 @@
                         <th>Product</th>
                         <th>Price</th>
                         <th>Quantity</th>
+                        <th>Total</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -240,7 +246,25 @@
                         <td><img src="{{ values.product.image.url }}" alt="{{ values.product.title }}" class="product-image" /></td>
                         <td><a href="{{ values.product.get_absolute_url }}" class="product-title">{{ values.product.title }}</a></td>
                         <td class="product-price">{{ values.price }}</td>
-                        <td><span class="product-quantity">{{ values.quantity }}</span></td>
+                        <td>
+                            <div class="add-to-cart">
+								<form method="post" action="{% url 'shop:add_to_cart' %}">
+								<div class="qty-label">
+									Qty
+									<div class="input-number">
+										<input type="number" name="quantity" value="{{ values.quantity }}">
+										<input type="hidden" name="product_id" value="{{ values.product.id }}">
+                                        <input type="hidden" name="update" value="1">
+										<span class="qty-up">+</span>
+										<span class="qty-down">-</span>
+									</div>
+								</div>
+								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> update</button>
+								{% csrf_token %}
+								</form>
+							</div>
+                        </td>
+                        <td>{{ values.total }}</td>
                         <td><a href="{% url 'shop:remove_from_cart' values.product.id %}" class="remove-button">Remove</a></td>
                     </tr>
                     {% endfor %}
