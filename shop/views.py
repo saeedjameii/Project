@@ -1,11 +1,10 @@
-from itertools import product
-
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 from decimal import Decimal
 from .models import Product, Category
 from django.shortcuts import get_object_or_404, redirect, reverse
+from .cart import Cart
 
 # from django.http import HttpResponse
 
@@ -48,28 +47,13 @@ def detail(request, id:int, title:str):
 def add_to_cart(request):
     product_id = request.POST.get('product_id')
     quantity = request.POST.get('quantity')
+    update = True if request.POST.get('update') == "1" else False
 
     product = get_object_or_404(Product, id=product_id)
 
-    cart = request.session.get('cart')
-    if not cart:
-        cart = request.session['cart'] = {}
+    cart = Cart(request)
+    cart.add(product_id, str(product.price), int(quantity), update)
 
-    if product_id in cart:
-        update = request.POST.get('update')
-        if update == '1':
-            cart[product_id]['quantity'] = int(quantity)
-        else:
-            cart[product_id]['quantity'] += int(quantity)
-    else:
-        cart[product_id] = {
-            'quantity': int(quantity),
-            'price': str(product.price)
-        }
-
-
-
-    request.session.modified = True
     return redirect(reverse('shop:cart_detail'))
 
 def cart_detail(request):
@@ -89,11 +73,8 @@ def cart_detail(request):
 
 def remove_from_cart(request, product_id):
     if Product.objects.filter(id=product_id).exists():
-        cart = request.session.get('cart')
-        if cart:
-            product_id = str(product_id)
-            if product_id in cart:
-                del cart[product_id]
-                request.session.modified = True
+        cart = Cart(request)
+        cart.remove(str(product_id))
         return redirect(reverse('shop:cart_detail'))
+
     raise Http404('Product not found')
