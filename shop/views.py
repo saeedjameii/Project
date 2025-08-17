@@ -57,14 +57,15 @@ def add_to_cart(request):
     return redirect(reverse('shop:cart_detail'))
 
 def cart_detail(request):
-    cart = request.session.get('cart')  
-    if cart:
-        product_ids = cart.keys()
+    cart = Cart(request)
+
+    if cart.cart:
+        product_ids = cart.product_ids()
         products = Product.objects.filter(id__in = product_ids)
         for product in products:
             cart[str(product.id)]['product'] = product
 
-        for item in cart.values():
+        for item in cart:
             item['total'] = Decimal(item['price']) * item['quantity']
 
         return render(request, "cart_detail.html", {'cart' : cart})

@@ -10,6 +10,16 @@ class Cart:
 
         self.cart = cart
 
+    def product_ids(self):
+        return self.cart.keys()
+
+    def __getitem__(self, item):
+        return self.cart[item]
+
+    def __iter__(self):
+        for item in self.cart.values():
+            yield item
+
     def add(self, product_id, product_price, quantity, update):
         if product_id not in self.cart:
             self.cart[product_id] = {
