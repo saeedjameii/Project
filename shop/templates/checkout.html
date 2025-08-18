@@ -133,23 +133,21 @@
 								<div><strong>PRODUCT</strong></div>
 								<div><strong>TOTAL</strong></div>
 							</div>
+							{% for item in cart %}
 							<div class="order-products">
 								<div class="order-col">
-									<div>1x Product Name Goes Here</div>
-									<div>$980.00</div>
-								</div>
-								<div class="order-col">
-									<div>2x Product Name Goes Here</div>
-									<div>$980.00</div>
+									<div>{{ item.quantity }}x {{ item.product.title }}</div>
+									<div>${{ item.total }}</div>
 								</div>
 							</div>
+							{% endfor %}
 							<div class="order-col">
 								<div>Shiping</div>
 								<div><strong>FREE</strong></div>
 							</div>
 							<div class="order-col">
 								<div><strong>TOTAL</strong></div>
-								<div><strong class="order-total">$2940.00</strong></div>
+								<div><strong class="order-total">${{ cart.sub_total }}</strong></div>
 							</div>
 						</div>
 						<div class="payment-method">
@@ -191,7 +189,10 @@
 								I've read and accept the <a href="#">terms & conditions</a>
 							</label>
 						</div>
-						<a href="#" class="primary-btn order-submit">Place order</a>
+						<form method="post">
+							{% csrf_token %}
+							<input type="submit" class="primary-btn order-submit" value="Place order">
+						</form>
 					</div>
 					<!-- /Order Details -->
 				</div>

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 CART_SESSION_ID = 'cart'
 
 class Cart:
@@ -10,8 +12,15 @@ class Cart:
 
         self.cart = cart
 
+
     def product_ids(self):
         return self.cart.keys()
+
+    def get_total_price(self):
+        total_price = 0
+        for item in self.cart.values():
+            total_price += Decimal(item['price']) * item['quantity']
+        return total_price
 
     def __getitem__(self, item):
         return self.cart[item]
@@ -23,6 +32,7 @@ class Cart:
     def add(self, product_id, product_price, quantity, update):
         if product_id not in self.cart:
             self.cart[product_id] = {
+                'product': product_id,
                 'quantity': 0,
                 'price': product_price
             }
@@ -41,4 +51,8 @@ class Cart:
 
     def __save(self):
         self.session[CART_SESSION_ID] = self.cart
+        self.session.modified = True
+
+    def clear(self):
+        self.session[CART_SESSION_ID] = {}
         self.session.modified = True

@@ -1,8 +1,10 @@
+from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
-from decimal import Decimal
-from .models import Product, Category
+
+from .admin import OrderProductAdmin
+from .models import Product, Category, Order, Order_products
 from django.shortcuts import get_object_or_404, redirect, reverse
 from .cart import Cart
 
@@ -23,7 +25,20 @@ def index(request):
     return render(request, "index.html", {'products' : products})
 
 
+@login_required
 def checkout(request):
+    cart = Cart(request)
+    if request.method == "POST":
+        order = Order.objects.create(user=request.user, total_price=cart.get_total_price())
+        for item in cart:
+            product = get_object_or_404(Product, id=item['product'])  
+            Order_products.objects.create(order=order,
+                                          product=product,
+                                          quantity=item['quantity'],
+                                          price=item['price'])
+
+        cart.clear()
+        return render(request, "order_detail.html", {'order': order})
     return render(request, "checkout.html")
 
 
